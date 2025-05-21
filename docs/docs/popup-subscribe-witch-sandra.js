@@ -1,27 +1,43 @@
- // Показывать всплывающее окно через 20 секунд
-function closeSubscribe() {
-    document.getElementById('jetpack-subscribe-popup').style.display = 'none';
-    document.getElementById('jetpack-subscribe-overlay').style.display = 'none';
-}
-
-function showSubscribePopup() {
-    const popup = document.getElementById('jetpack-subscribe-popup');
-    const overlay = document.getElementById('jetpack-subscribe-overlay');
+// для многих всплывающих окон 
+function openPopup(popupId, overlayId) {
+    const popup = document.getElementById(popupId);
+    const overlay = document.getElementById(overlayId);
     if (popup && overlay) {
         popup.style.display = 'block';
         overlay.style.display = 'block';
     }
-    const now = new Date().getTime();
-    localStorage.setItem("jetpackSubscribedTime", now);
 }
 
-window.addEventListener("load", function () {
-    const lastTime = localStorage.getItem("jetpackSubscribedTime");
+function closePopup(popupId, overlayId) {
+    const popup = document.getElementById(popupId);
+    const overlay = document.getElementById(overlayId);
+    if (popup && overlay) {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+    }
+}
+
+function showPopupWithDelay(popupId, overlayId, delaySeconds, storageKey, intervalHours) {
+    const lastTime = localStorage.getItem(storageKey);
     const now = new Date().getTime();
-    const delay = 20 * 1000;
-    const interval = 24 * 60 * 60 * 1000;
+    const delay = delaySeconds * 1000;
+    const interval = intervalHours * 60 * 60 * 1000;
 
     if (!lastTime || (now - lastTime) > interval) {
-        setTimeout(showSubscribePopup, delay);
+        setTimeout(() => {
+            openPopup(popupId, overlayId);
+            localStorage.setItem(storageKey, now);
+        }, delay);
     }
+}
+
+// Вызов всплывающего окна Jetpack подписки через 20 секунд, повтор через 24 часа
+window.addEventListener("load", function () {
+    showPopupWithDelay(
+        "jetpack-subscribe-popup",     // ID всплывающего окна
+        "jetpack-subscribe-overlay",   // ID фона-затемнения
+        20,                             // Задержка: 20 секунд
+        "jetpackSubscribedTime",        // Ключ localStorage
+        24                              // Интервал показа: 24 часа
+    );
 });
