@@ -1,4 +1,4 @@
-// для многих всплывающих окон 
+// 📦 Универсальные функции для многих окон
 function openPopup(popupId, overlayId) {
     const popup = document.getElementById(popupId);
     const overlay = document.getElementById(overlayId);
@@ -31,13 +31,21 @@ function showPopupWithDelay(popupId, overlayId, delaySeconds, storageKey, interv
     }
 }
 
-// Вызов всплывающего окна Jetpack подписки через 20 секунд, повтор через 24 часа
-window.addEventListener("load", function () {
-    showPopupWithDelay(
-        "jetpack-subscribe-popup",     // ID всплывающего окна
-        "jetpack-subscribe-overlay",   // ID фона-затемнения
-        20,                             // Задержка: 20 секунд
-        "jetpackSubscribedTime",        // Ключ localStorage
-        24                              // Интервал показа: 24 часа
-    );
+// 📜 Вместо window.load — срабатывание при прокрутке 50% вниз
+window.addEventListener("scroll", function onScroll() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const pageHeight = document.body.scrollHeight - window.innerHeight;
+    const scrolledPercent = (scrollY / pageHeight) * 100;
+
+    if (scrolledPercent > 50) {
+        window.removeEventListener("scroll", onScroll);
+
+        showPopupWithDelay(
+            "jetpack-subscribe-popup",     // ID всплывающего окна
+            "jetpack-subscribe-overlay",   // ID затемнения
+            0,                              // без задержки (сразу после условия)
+            "jetpackSubscribedTime",        // ключ localStorage
+            24                              // интервал повторного показа (в часах)
+        );
+    }
 });
