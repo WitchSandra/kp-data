@@ -18,28 +18,24 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download KP index safely
+      - name: Try primary NOAA source, fallback to alternative
         run: |
-          set -x  # включаем отладочный вывод
-          echo "📡 Запрашиваем данные с NOAA..."
-          STATUS=$(curl -s -w "%{http_code}" -o tmp_kp.json https://services.swpc.noaa.gov/json/planetary_k_index.json)
+          set -x
+          echo "📡 Пробуем основной источник NOAA..."
+          STATUS=$(curl -s -w "%{http_code}" -o tmp_primary.json https://services.swpc.noaa.gov/json/planetary_k_index.json)
 
-          echo "Получен статус: $STATUS"
-          echo "Содержимое файла tmp_kp.json:"
-          cat tmp_kp.json || echo "⚠️ Не удалось прочитать tmp_kp.json"
-
-          if [ "$STATUS" != "200" ]; then
-            echo "❌ Ошибка: NOAA вернул статус $STATUS"
-            exit 1
-          fi
-
-          if jq empty tmp_kp.json 2>/dev/null; then
-            mv tmp_kp.json docs/planetary_k_index.json
-            echo "✅ Данные успешно сохранены."
+          if [ "$STATUS" = "200" ] && jq empty tmp_primary.json 2>/dev/null; then
+            echo "✅ Основной источник работает. Сохраняем..."
+            jq -c '.[-1]' tmp_primary.json > docs/planetary_k_index.json
           else
-            echo "❌ Получен невалидный JSON."
-            exit 1
+            echo "⚠️ Основной источник не доступен. Код: $STATUS. Пробуем альтернативу..."
+            curl -s https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json -o tmp_alt.json
+            jq -c '.[1]' tmp_alt.json > docs/planetary_k_index.json
+            echo "✅ Альтернативный источник использован."
           fi
+
+          echo "📄 Содержимое сохранённого файла:"
+          cat docs/planetary_k_index.json
 
       - name: Commit and push
         run: |
@@ -48,5 +44,5 @@ jobs:
           git status
           ls -l docs/
           git add docs/planetary_k_index.json
-          git commit -m "Update KP index from NOAA" || echo "ℹ️ Нет изменений для коммита"
+          git commit -m "Update KP index from available NOAA source" || echo "ℹ️ Нет изменений для коммита"
           git push
