@@ -42,3 +42,6 @@ jobs:
           git add docs/planetary_k_index.json
           git commit -m "Update KP index from NOAA" || echo "ℹ️ Нет изменений для коммита"
           git push
+
+          git commit -m "Update KP index from NOAA" || echo "ℹ️ Нет изменений для коммита"
+          git push
