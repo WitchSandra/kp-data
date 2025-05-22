@@ -30,7 +30,7 @@ jobs:
           else
             echo "⚠️ Основной источник не доступен. Код: $STATUS. Пробуем альтернативу..."
             curl -s https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json -o tmp_alt.json
-            jq -c '.[1]' tmp_alt.json > docs/planetary_k_index.json
+            jq -c '.[-1]' tmp_alt.json > docs/planetary_k_index.json
             echo "✅ Альтернативный источник использован."
           fi
 
