@@ -20,15 +20,19 @@ jobs:
 
       - name: Download KP index safely
         run: |
+          set -x  # включаем отладочный вывод
           echo "📡 Запрашиваем данные с NOAA..."
           STATUS=$(curl -s -w "%{http_code}" -o tmp_kp.json https://services.swpc.noaa.gov/json/planetary_k_index.json)
+
+          echo "Получен статус: $STATUS"
+          echo "Содержимое файла tmp_kp.json:"
+          cat tmp_kp.json || echo "⚠️ Не удалось прочитать tmp_kp.json"
 
           if [ "$STATUS" != "200" ]; then
             echo "❌ Ошибка: NOAA вернул статус $STATUS"
             exit 1
           fi
 
-          # Проверим что это действительно JSON
           if jq empty tmp_kp.json 2>/dev/null; then
             mv tmp_kp.json docs/planetary_k_index.json
             echo "✅ Данные успешно сохранены."
@@ -41,6 +45,8 @@ jobs:
         run: |
           git config user.name "GitHub Action"
           git config user.email "actions@github.com"
+          git status
+          ls -l docs/
           git add docs/planetary_k_index.json
           git commit -m "Update KP index from NOAA" || echo "ℹ️ Нет изменений для коммита"
           git push
