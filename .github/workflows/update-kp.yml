@@ -18,21 +18,21 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-- name: Try primary NOAA source, fallback to alternative
-  run: |
-    set -x
-    echo "📡 Пробуем основной источник NOAA..."
-    STATUS=$(curl -s -w "%{http_code}" -o tmp_primary.json https://services.swpc.noaa.gov/json/planetary_k_index.json)
+      - name: Try primary NOAA source, fallback to alternative
+        run: |
+          set -x
+          echo "📡 Пробуем основной источник NOAA..."
+          STATUS=$(curl -s -w "%{http_code}" -o tmp_primary.json https://services.swpc.noaa.gov/json/planetary_k_index.json)
 
-    if [ "$STATUS" = "200" ] && jq empty tmp_primary.json 2>/dev/null; then
-      echo "✅ Основной источник работает. Сохраняем..."
-      jq -c '.[-1]' tmp_primary.json > docs/planetary_k_index.json
-    else
-      echo "⚠️ Основной источник не доступен. Код: $STATUS. Пробуем альтернативу..."
-      curl -s https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json -o tmp_alt.json
-      jq -c '.[-1]' tmp_alt.json > docs/planetary_k_index.json
-      echo "✅ Альтернативный источник использован."
-    fi
+          if [ "$STATUS" = "200" ] && jq empty tmp_primary.json 2>/dev/null; then
+            echo "✅ Основной источник работает. Сохраняем..."
+            jq -c '.[-1]' tmp_primary.json > docs/planetary_k_index.json
+          else
+            echo "⚠️ Основной источник не доступен. Код: $STATUS. Пробуем альтернативу..."
+            curl -s https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json -o tmp_alt.json
+            jq -c '.[-1]' tmp_alt.json > docs/planetary_k_index.json
+            echo "✅ Альтернативный источник использован."
+          fi
 
           echo "📄 Содержимое сохранённого файла:"
           cat docs/planetary_k_index.json
