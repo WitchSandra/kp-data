@@ -1,0 +1,25 @@
+name: Update KP Index
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # каждый час
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download KP index
+        run: |
+          curl -s https://services.swpc.noaa.gov/json/planetary_k_index.json -o docs/planetary_k_index.json
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "actions@github.com"
+          git add docs/planetary_k_index.json
+          git commit -m "Update KP index from NOAA" || echo "No changes to commit"
+          git push
