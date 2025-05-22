@@ -11,19 +11,34 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Download KP index
+      - name: Download KP index safely
         run: |
-          curl -s -H "Accept: application/json" https://services.swpc.noaa.gov/json/planetary_k_index.json | \
-jq . > docs/planetary_k_index.json
+          echo "📡 Запрашиваем данные с NOAA..."
+          STATUS=$(curl -s -w "%{http_code}" -o tmp_kp.json https://services.swpc.noaa.gov/json/planetary_k_index.json)
+
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Ошибка: NOAA вернул статус $STATUS"
+            exit 1
+          fi
+
+          # Проверим что это действительно JSON
+          if jq empty tmp_kp.json 2>/dev/null; then
+            mv tmp_kp.json docs/planetary_k_index.json
+            echo "✅ Данные успешно сохранены."
+          else
+            echo "❌ Получен невалидный JSON."
+            exit 1
+          fi
 
       - name: Commit and push
         run: |
           git config user.name "GitHub Action"
           git config user.email "actions@github.com"
           git add docs/planetary_k_index.json
-          git commit -m "Update KP index from NOAA" || echo "No changes to commit"
+          git commit -m "Update KP index from NOAA" || echo "ℹ️ Нет изменений для коммита"
           git push
