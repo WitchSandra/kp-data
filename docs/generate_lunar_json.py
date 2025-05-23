@@ -55,6 +55,9 @@ def fetch_zodiac_sign(date_str):
         sys.stderr.write(f"❌ Ошибка при получении Зодиака на {date_str}: {str(e)}\n")
     return ""
 
+def translate_phase(phase):
+    return phase  # временно возвращаем английский вариант, чтобы избежать ошибки
+
 def generate_lunar_json(days=5):
     # Отключено временно для отладки
     # if already_updated_this_month():
