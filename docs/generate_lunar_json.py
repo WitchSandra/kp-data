@@ -27,6 +27,21 @@ def fetch_moon_phase(timestamp):
         print(f"[farmSense] Ошибка: {response.status_code}")
     return None
 
+def determine_zodiac_from_ra(ra_string):
+    try:
+        h, m, s = map(float, ra_string.replace("RA ", "").replace("h", "").replace("m", "").replace("s", "").split())
+        total_hours = h + m / 60 + s / 3600
+        degrees = total_hours * 15  # 1 час = 15°
+        zodiac_names = [
+            "Овен", "Телец", "Близнецы", "Рак", "Лев", "Дева",
+            "Весы", "Скорпион", "Стрелец", "Козерог", "Водолей", "Рыбы"
+        ]
+        index = int(degrees // 30) % 12
+        return zodiac_names[index]
+    except Exception as e:
+        print(f"❌ Ошибка определения знака по RA: {e}")
+        return ""
+
 def fetch_zodiac_sign(date_str):
     from_date = to_date = date_str
     time = "00:00:00"
@@ -47,7 +62,9 @@ def fetch_zodiac_sign(date_str):
         )
         response.raise_for_status()
         data = response.json()
-        zodiac = data["data"]["table"]["rows"][0]["cells"][0].get("zodiac", {}).get("name", "")
+        ra = data["data"]["table"]["rows"][0]["cells"][0]["position"]["equatorial"]["rightAscension"]
+        ra_str = f"RA {ra['hours']}h {ra['minutes']}m {ra['seconds']}s"
+        zodiac = determine_zodiac_from_ra(ra_str)
         print(f"🔭 Знак Зодиака для {date_str}: {zodiac}")
         return zodiac
     except Exception as e:
@@ -76,11 +93,6 @@ def generate_tarot(phase):
     return "Аркан временно недоступен"
 
 def generate_lunar_json(days=5):
-    # Отключено временно для отладки
-    # if already_updated_this_month():
-    #     print("Календарь уже обновлён в этом месяце. Завершаем.")
-    #     return
-
     today = datetime.utcnow()
     data = []
 
