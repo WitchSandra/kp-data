@@ -2,7 +2,7 @@ name: Update Lunar Calendar
 
 on:
   schedule:
-    - cron: '0 3 1 * *'  # запуск 1 числа месяца в 03:00 UTC
+    - cron: '0 3 * * *'  # ежедневный запуск в 03:00 UTC
   workflow_dispatch:      # запуск вручную через GitHub UI
 
 jobs:
@@ -21,9 +21,17 @@ jobs:
         run: pip install requests
 
       - name: Run lunar calendar generator
-        run: python generate_lunar_json.py
+        run: |
+          echo "Запуск генерации календаря Луны"
+          if python docs/generate_lunar_json.py; then
+            echo "✅ Успешно сгенерировано"
+          else
+            echo "❌ Ошибка при генерации. Отмена коммита."
+            exit 1
+          fi
 
       - name: Commit and push changes
+        if: success()
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
