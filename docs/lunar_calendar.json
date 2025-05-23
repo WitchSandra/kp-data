@@ -5,7 +5,7 @@
     "phase_ru": "Waning Crescent",
     "illumination": 0.18,
     "magical_tip": "Магический совет временно недоступен",
-    "zodiac_sign": "",
+    "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
     "energy": "Энергия временно недоступна",
     "focus": [
@@ -20,7 +20,7 @@
     "phase_ru": "Waning Crescent",
     "illumination": 0.1,
     "magical_tip": "Магический совет временно недоступен",
-    "zodiac_sign": "",
+    "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
     "energy": "Энергия временно недоступна",
     "focus": [
@@ -35,7 +35,7 @@
     "phase_ru": "Waning Crescent",
     "illumination": 0.04,
     "magical_tip": "Магический совет временно недоступен",
-    "zodiac_sign": "",
+    "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
     "energy": "Энергия временно недоступна",
     "focus": [
@@ -50,7 +50,7 @@
     "phase_ru": "Dark Moon",
     "illumination": 0,
     "magical_tip": "Магический совет временно недоступен",
-    "zodiac_sign": "",
+    "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
     "energy": "Энергия временно недоступна",
     "focus": [
@@ -65,7 +65,7 @@
     "phase_ru": "New Moon",
     "illumination": 0,
     "magical_tip": "Магический совет временно недоступен",
-    "zodiac_sign": "",
+    "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
     "energy": "Энергия временно недоступна",
     "focus": [
