@@ -1,6 +1,18 @@
 import requests
 import json
+import os
 from datetime import datetime, timedelta
+
+def already_updated_this_month():
+    try:
+        with open("docs/lunar_calendar.json", encoding="utf-8") as f:
+            data = json.load(f)
+        first_entry = data[0]
+        entry_month = first_entry["date"][:7]  # формат YYYY-MM
+        current_month = datetime.utcnow().strftime("%Y-%m")
+        return entry_month == current_month
+    except Exception:
+        return False
 
 def fetch_moon_phase(timestamp):
     url = f"https://api.farmsense.net/v1/moonphases/?d={timestamp}"
@@ -10,6 +22,10 @@ def fetch_moon_phase(timestamp):
     return None
 
 def generate_lunar_json(days=365):
+    if already_updated_this_month():
+        print("Календарь уже обновлён в этом месяце. Завершаем.")
+        return
+
     today = datetime.utcnow()
     data = []
 
