@@ -56,9 +56,10 @@ def fetch_zodiac_sign(date_str):
     return ""
 
 def generate_lunar_json(days=5):
-    if already_updated_this_month():
-        print("Календарь уже обновлён в этом месяце. Завершаем.")
-        return
+    # Отключено временно для отладки
+    # if already_updated_this_month():
+    #     print("Календарь уже обновлён в этом месяце. Завершаем.")
+    #     return
 
     today = datetime.utcnow()
     data = []
