@@ -21,6 +21,9 @@ jobs:
         run: pip install requests
 
       - name: Run lunar calendar generator
+        env:
+          ASTRO_API_ID: ${{ secrets.ASTRO_API_ID }}
+          ASTRO_API_SECRET: ${{ secrets.ASTRO_API_SECRET }}
         run: |
           echo "Запуск генерации календаря Луны"
           if python docs/generate_lunar_json.py; then
@@ -36,5 +39,5 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add docs/lunar_calendar.json
-          git commit -m "Auto-update lunar calendar"
-          git push
+          git diff --cached --quiet || git commit -m "Auto-update lunar calendar"
+          git push || echo "⚠️ Нет изменений для push"
