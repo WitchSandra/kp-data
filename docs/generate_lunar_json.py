@@ -27,49 +27,27 @@ def fetch_moon_phase(timestamp):
         print(f"[farmSense] Ошибка: {response.status_code}")
     return None
 
-def determine_zodiac_from_ra(ra_string):
-    try:
-        h, m, s = map(float, ra_string.replace("RA ", "").replace("h", "").replace("m", "").replace("s", "").split())
-        total_hours = h + m / 60 + s / 3600
-        degrees = total_hours * 15  # 1 час = 15°
-        zodiac_names = [
-            "Овен", "Телец", "Близнецы", "Рак", "Лев", "Дева",
-            "Весы", "Скорпион", "Стрелец", "Козерог", "Водолей", "Рыбы"
-        ]
-        index = int(degrees // 30) % 12
-        return zodiac_names[index]
-    except Exception as e:
-        print(f"❌ Ошибка определения знака по RA: {e}")
-        return ""
+def determine_zodiac_from_angle(angle):
+    zodiac_names = [
+        "Овен", "Телец", "Близнецы", "Рак", "Лев", "Дева",
+        "Весы", "Скорпион", "Стрелец", "Козерог", "Водолей", "Рыбы"
+    ]
+    index = int(angle // 30) % 12
+    return zodiac_names[index]
 
 def fetch_zodiac_sign(date_str):
-    from_date = to_date = date_str
-    time = "00:00:00"
-    longitude = -84.39733
-    latitude = 33.775867
-    url = (
-        f"https://api.astronomyapi.com/api/v2/bodies/positions/moon"
-        f"?latitude={latitude}&longitude={longitude}&from_date={from_date}&to_date={to_date}&elevation=0&time={time}&coordinate_system=equatorial"
-    )
-    headers = {
-        "Content-Type": "application/json"
-    }
     try:
-        response = requests.get(
-            url,
-            headers=headers,
-            auth=(os.getenv("ASTRO_API_ID"), os.getenv("ASTRO_API_SECRET"))
-        )
+        url = f"https://api.ipgeolocation.io/astronomy?apiKey={os.getenv('IPGEO_API_KEY')}&date={date_str}&lat=54.6872&long=25.2797"
+        response = requests.get(url)
         response.raise_for_status()
         data = response.json()
-        ra = data["data"]["table"]["rows"][0]["cells"][0]["position"]["equatorial"]["rightAscension"]
-        ra_str = f"RA {ra['hours']}h {ra['minutes']}m {ra['seconds']}s"
-        zodiac = determine_zodiac_from_ra(ra_str)
+        ra_hours = float(data['moon']['right_ascension'])  # degrees
+        zodiac = determine_zodiac_from_angle(ra_hours)
         print(f"🔭 Знак Зодиака для {date_str}: {zodiac}")
         return zodiac
     except Exception as e:
         sys.stderr.write(f"❌ Ошибка при получении Зодиака на {date_str}: {str(e)}\n")
-    return ""
+        return ""
 
 def translate_phase(phase):
     return phase  # временно возвращаем английский вариант, чтобы избежать ошибки
