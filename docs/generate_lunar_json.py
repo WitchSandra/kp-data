@@ -28,22 +28,21 @@ def fetch_moon_phase(timestamp):
     return None
 
 def fetch_zodiac_sign(date_str):
-    astro_url = "https://api.astronomyapi.com/api/v2/bodies/positions/moon"
+    from_date = to_date = date_str
+    time = "00:00:00"
+    longitude = -84.39733
+    latitude = 33.775867
+    url = (
+        f"https://api.astronomyapi.com/api/v2/bodies/positions/moon"
+        f"?latitude={latitude}&longitude={longitude}&from_date={from_date}&to_date={to_date}&elevation=0&time={time}&coordinate_system=equatorial"
+    )
     headers = {
         "Content-Type": "application/json"
     }
-    payload = {
-        "latitude": 54.68,
-        "longitude": 25.28,
-        "elevation": 180,
-        "from_date": date_str,
-        "to_date": date_str
-    }
     try:
-        response = requests.post(
-            astro_url,
+        response = requests.get(
+            url,
             headers=headers,
-            json=payload,
             auth=(os.getenv("ASTRO_API_ID"), os.getenv("ASTRO_API_SECRET"))
         )
         response.raise_for_status()
