@@ -21,6 +21,32 @@ def fetch_moon_phase(timestamp):
         return response.json()[0]
     return None
 
+def fetch_zodiac_sign(date_str):
+    astro_url = "https://api.astronomyapi.com/api/v2/bodies/positions/moon"
+    headers = {
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "latitude": 54.68,  # Вильнюс
+        "longitude": 25.28,
+        "elevation": 180,
+        "from_date": date_str,
+        "to_date": date_str
+    }
+    try:
+        response = requests.post(
+            astro_url,
+            headers=headers,
+            json=payload,
+            auth=(os.getenv("ASTRO_API_ID"), os.getenv("ASTRO_API_SECRET"))
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return data["data"]["table"]["rows"][0]["cells"][0]["zodiac"]["name"]
+    except Exception as e:
+        print(f"Zodiac fetch error: {e}")
+    return ""
+
 def generate_lunar_json(days=365):
     if already_updated_this_month():
         print("Календарь уже обновлён в этом месяце. Завершаем.")
@@ -31,17 +57,19 @@ def generate_lunar_json(days=365):
 
     for i in range(days):
         date = today + timedelta(days=i)
+        date_str = date.strftime("%Y-%m-%d")
         timestamp = int(date.timestamp())
         moon_data = fetch_moon_phase(timestamp)
         if moon_data:
             phase = moon_data.get("Phase", "")
+            zodiac = fetch_zodiac_sign(date_str)
             entry = {
-                "date": date.strftime("%Y-%m-%d"),
+                "date": date_str,
                 "phase": phase,
                 "phase_ru": translate_phase(phase),
                 "illumination": moon_data.get("Illumination", ""),
                 "magical_tip": generate_magical_tip(phase),
-                "zodiac_sign": "",  # Добавим позже через другой API
+                "zodiac_sign": zodiac,
                 "ritual": generate_ritual(phase),
                 "energy": generate_energy(phase),
                 "focus": generate_focus(phase),
