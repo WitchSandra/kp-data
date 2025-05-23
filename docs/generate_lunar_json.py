@@ -37,7 +37,10 @@ def determine_zodiac_from_angle(angle):
 
 def fetch_zodiac_sign(date_str):
     try:
-        url = f"https://api.ipgeolocation.io/astronomy?apiKey={os.getenv('IPGEO_API_KEY')}&date={date_str}&lat=54.6872&long=25.2797"
+        # Координаты Вильнюса
+        lat = 54.6872
+        lon = 25.2797
+        url = f"https://api.ipgeolocation.io/astronomy?apiKey={os.getenv('IPGEO_API_KEY')}&date={date_str}&lat={lat}&long={lon}"
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
