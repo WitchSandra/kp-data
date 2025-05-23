@@ -25,13 +25,14 @@ jobs:
           ASTRO_API_ID: ${{ secrets.ASTRO_API_ID }}
           ASTRO_API_SECRET: ${{ secrets.ASTRO_API_SECRET }}
         run: |
-          echo "Запуск генерации календаря Луны"
+          echo "::group::🔄 Запуск генерации календаря Луны"
           if python docs/generate_lunar_json.py; then
-            echo "✅ Успешно сгенерировано"
+            echo "::notice title=Успешно::✅ Календарь успешно сгенерирован"
           else
-            echo "❌ Ошибка при генерации. Отмена коммита."
+            echo "::error title=Ошибка::❌ Ошибка при генерации"
             exit 1
           fi
+          echo "::endgroup::"
 
       - name: Commit and push changes
         if: success()
