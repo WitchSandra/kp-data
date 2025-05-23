@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import sys
 from datetime import datetime, timedelta
 
 def already_updated_this_month():
@@ -45,12 +46,13 @@ def fetch_zodiac_sign(date_str):
             json=payload,
             auth=(os.getenv("ASTRO_API_ID"), os.getenv("ASTRO_API_SECRET"))
         )
-        print(f"[astronomyapi] {response.status_code}: {response.text[:200]}")
-        if response.status_code == 200:
-            data = response.json()
-            return data["data"]["table"]["rows"][0]["cells"][0]["zodiac"]["name"]
+        response.raise_for_status()
+        data = response.json()
+        zodiac = data["data"]["table"]["rows"][0]["cells"][0].get("zodiac", {}).get("name", "")
+        print(f"🔭 Знак Зодиака для {date_str}: {zodiac}")
+        return zodiac
     except Exception as e:
-        print(f"Zodiac fetch error: {e}")
+        sys.stderr.write(f"❌ Ошибка при получении Зодиака на {date_str}: {str(e)}\n")
     return ""
 
 def generate_lunar_json(days=5):
