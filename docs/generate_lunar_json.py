@@ -53,7 +53,7 @@ def fetch_zodiac_sign(date_str):
         print(f"Zodiac fetch error: {e}")
     return ""
 
-def generate_lunar_json(days=365):
+def generate_lunar_json(days=5):
     if already_updated_this_month():
         print("Календарь уже обновлён в этом месяце. Завершаем.")
         return
@@ -66,14 +66,17 @@ def generate_lunar_json(days=365):
         date_str = date.strftime("%Y-%m-%d")
         timestamp = int(date.timestamp())
         moon_data = fetch_moon_phase(timestamp)
+        print(f"\n📅 {date_str}")
         if moon_data:
             phase = moon_data.get("Phase", "")
+            illum = moon_data.get("Illumination", "")
+            print(f"🌙 Фаза: {phase}, Освещённость: {illum}")
             zodiac = fetch_zodiac_sign(date_str)
             entry = {
                 "date": date_str,
                 "phase": phase,
                 "phase_ru": translate_phase(phase),
-                "illumination": moon_data.get("Illumination", ""),
+                "illumination": illum,
                 "magical_tip": generate_magical_tip(phase),
                 "zodiac_sign": zodiac,
                 "ritual": generate_ritual(phase),
@@ -83,6 +86,8 @@ def generate_lunar_json(days=365):
                 "tarot_arcana": generate_tarot(phase)
             }
             data.append(entry)
+        else:
+            print("⚠️ Нет данных о фазе Луны")
 
     if not data:
         print("⚠️ Данные для календаря не были сгенерированы. Файл не будет сохранён.")
@@ -90,8 +95,6 @@ def generate_lunar_json(days=365):
 
     with open("docs/lunar_calendar.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-
-# остальные функции translate_phase, generate_magical_tip и т.д. без изменений
 
 # Запуск
 generate_lunar_json()
