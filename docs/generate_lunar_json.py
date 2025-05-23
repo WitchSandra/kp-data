@@ -51,7 +51,7 @@ def fetch_zodiac_sign(date_str):
         return zodiac
     except Exception as e:
         sys.stderr.write(f"❌ Ошибка при получении Зодиака на {date_str}: {str(e)}\n")
-        return ""
+        return "Ошибка определения"
 
 def translate_phase(phase):
     return phase  # временно возвращаем английский вариант, чтобы избежать ошибки
