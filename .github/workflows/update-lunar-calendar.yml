@@ -2,8 +2,8 @@ name: Update Lunar Calendar
 
 on:
   schedule:
-    - cron: '0 3 1 * *'  # раз в месяц: 1 числа в 03:00 UTC
-  workflow_dispatch:      # запуск вручную из интерфейса GitHub
+    - cron: '0 3 1 * *'  # запуск 1 числа месяца в 03:00 UTC
+  workflow_dispatch:      # запуск вручную через GitHub UI
 
 jobs:
   update:
