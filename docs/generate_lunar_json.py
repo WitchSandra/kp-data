@@ -58,6 +58,24 @@ def fetch_zodiac_sign(date_str):
 def translate_phase(phase):
     return phase  # временно возвращаем английский вариант, чтобы избежать ошибки
 
+def generate_magical_tip(phase):
+    return "Магический совет временно недоступен"
+
+def generate_ritual(phase):
+    return "Ритуал временно недоступен"
+
+def generate_energy(phase):
+    return "Энергия временно недоступна"
+
+def generate_focus(phase):
+    return ["Цель временно недоступна"]
+
+def generate_rune(phase):
+    return "Руна временно недоступна"
+
+def generate_tarot(phase):
+    return "Аркан временно недоступен"
+
 def generate_lunar_json(days=5):
     # Отключено временно для отладки
     # if already_updated_this_month():
