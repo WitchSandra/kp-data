@@ -44,8 +44,9 @@ def fetch_zodiac_sign(date_str):
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
-        ra_hours = float(data['moon']['right_ascension'])  # degrees
-        zodiac = determine_zodiac_from_angle(ra_hours)
+        ra_hours = float(data['moon']['right_ascension'])
+        angle_degrees = ra_hours * 15
+        zodiac = determine_zodiac_from_angle(angle_degrees)
         print(f"🔭 Знак Зодиака для {date_str}: {zodiac}")
         return zodiac
     except Exception as e:
