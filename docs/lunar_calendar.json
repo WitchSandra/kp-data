@@ -1,24 +1,9 @@
 [
   {
-    "date": "2025-05-23",
-    "phase": "Waning Crescent",
-    "phase_ru": "Waning Crescent",
-    "illumination": 0.17,
-    "magical_tip": "Магический совет временно недоступен",
-    "zodiac_sign": "Ошибка определения",
-    "ritual": "Ритуал временно недоступен",
-    "energy": "Энергия временно недоступна",
-    "focus": [
-      "Цель временно недоступна"
-    ],
-    "associated_rune": "Руна временно недоступна",
-    "tarot_arcana": "Аркан временно недоступен"
-  },
-  {
     "date": "2025-05-24",
     "phase": "Waning Crescent",
     "phase_ru": "Waning Crescent",
-    "illumination": 0.09,
+    "illumination": 0.13,
     "magical_tip": "Магический совет временно недоступен",
     "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
@@ -33,7 +18,7 @@
     "date": "2025-05-25",
     "phase": "Waning Crescent",
     "phase_ru": "Waning Crescent",
-    "illumination": 0.03,
+    "illumination": 0.06,
     "magical_tip": "Магический совет временно недоступен",
     "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
@@ -46,9 +31,9 @@
   },
   {
     "date": "2025-05-26",
-    "phase": "Dark Moon",
-    "phase_ru": "Dark Moon",
-    "illumination": 0,
+    "phase": "Waning Crescent",
+    "phase_ru": "Waning Crescent",
+    "illumination": 0.01,
     "magical_tip": "Магический совет временно недоступен",
     "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
@@ -64,6 +49,21 @@
     "phase": "New Moon",
     "phase_ru": "New Moon",
     "illumination": 0,
+    "magical_tip": "Магический совет временно недоступен",
+    "zodiac_sign": "Ошибка определения",
+    "ritual": "Ритуал временно недоступен",
+    "energy": "Энергия временно недоступна",
+    "focus": [
+      "Цель временно недоступна"
+    ],
+    "associated_rune": "Руна временно недоступна",
+    "tarot_arcana": "Аркан временно недоступен"
+  },
+  {
+    "date": "2025-05-28",
+    "phase": "New Moon",
+    "phase_ru": "New Moon",
+    "illumination": 0.02,
     "magical_tip": "Магический совет временно недоступен",
     "zodiac_sign": "Ошибка определения",
     "ritual": "Ритуал временно недоступен",
