@@ -40,7 +40,7 @@ def fetch_zodiac_sign(date_str):
         # Координаты Вильнюса
         lat = 54.6872
         lon = 25.2797
-        url = f"https://api.ipgeolocation.io/astronomy?apiKey={os.getenv('IPGEO_API_KEY')}&date={date_str}&lat={lat}&long={lon}"
+        url = f"https://api.ipgeolocation.io/astronomy?apiKey={os.getenv('IPGEO_API_KEY')}&date={date_str}&location=Vilnius"
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
