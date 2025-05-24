@@ -40,13 +40,16 @@ def fetch_zodiac_sign(date_str):
         # Координаты Вильнюса
         lat = 54.6872
         lon = 25.2797
-        url = f"https://api.ipgeolocation.io/astronomy?apiKey={os.getenv('IPGEO_API_KEY')}&date={date_str}&lat={lat}&long={lon}"
+        api_key = os.getenv('IPGEO_API_KEY')
+        if not api_key:
+            print("❗ Переменная окружения IPGEO_API_KEY не установлена.")
+        url = f"https://api.ipgeolocation.io/astronomy?apiKey={api_key}&date={date_str}&lat={lat}&long={lon}"
         print(f"🌐 Запрос к API: {url}")
         response = requests.get(url)
+        print(f"🔁 Статус ответа: {response.status_code}")
+        print(f"🧾 Ответ: {response.text}")
         response.raise_for_status()
         data = response.json()
-        print(f"DEBUG ipgeolocation response for {date_str}:
-{json.dumps(data, indent=2, ensure_ascii=False)}")
         ra_hours = float(data['moon']['right_ascension'])
         angle_degrees = ra_hours * 15
         zodiac = determine_zodiac_from_angle(angle_degrees)
