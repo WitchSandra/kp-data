@@ -5,6 +5,7 @@ import sys
 import base64
 from datetime import datetime, timedelta
 
+
 def already_updated_this_month():
     try:
         with open("docs/lunar_calendar.json", encoding="utf-8") as f:
@@ -16,17 +17,34 @@ def already_updated_this_month():
     except Exception:
         return False
 
-def fetch_moon_phase(timestamp):
-    url = f"https://api.farmsense.net/v1/moonphases/?d={timestamp}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        parsed = response.json()
-        if not parsed:
-            print(f"[farmSense] Пустой ответ для {timestamp}")
-        return parsed[0] if parsed else None
-    else:
-        print(f"[farmSense] Ошибка: {response.status_code}")
+
+def fetch_moon_phase_openmeteo(date_str):
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": 54.6872,
+        "longitude": 25.2797,
+        "daily": "moon_phase",
+        "timezone": "Europe/Vilnius",
+        "start_date": date_str,
+        "end_date": date_str
+    }
+    try:
+        response = requests.get(url, params=params)
+        print(f"🌐 OpenMeteo: {response.url}")
+        if response.status_code == 200:
+            data = response.json()
+            phase_code = data["daily"]["moon_phase"][0]
+            illumination = 0.0  # OpenMeteo не даёт освещённость
+            return {
+                "Phase": str(phase_code),
+                "Illumination": illumination
+            }
+        else:
+            print(f"❌ OpenMeteo Error {response.status_code}: {response.text}")
+    except Exception as e:
+        print(f"❌ OpenMeteo Exception: {e}")
     return None
+
 
 def determine_zodiac_from_angle(angle):
     zodiac_names = [
@@ -36,63 +54,38 @@ def determine_zodiac_from_angle(angle):
     index = int(angle // 30) % 12
     return zodiac_names[index]
 
-def get_astro_auth_header():
-    app_id = os.getenv("ASTRO_API_ID")
-    app_secret = os.getenv("ASTRO_API_SECRET")
-    if not app_id or not app_secret:
-        raise ValueError("❌ Отсутствует ASTRO_API_ID или ASTRO_API_SECRET")
-    token = f"{app_id}:{app_secret}"
-    encoded_token = base64.b64encode(token.encode()).decode()
-    return {"Authorization": f"Basic {encoded_token}"}
 
-def fetch_zodiac_sign(date_str):
-    try:
-        lat = 54.6872
-        lon = 25.2797
-        url = "https://api.astronomyapi.com/api/v2/bodies/positions/moon"
-        headers = get_astro_auth_header()
-        params = {
-            "latitude": lat,
-            "longitude": lon,
-            "from_date": date_str,
-            "to_date": date_str,
-            "elevation": 0
-        }
-        print(f"🌐 Запрос к AstronomyAPI: {url}")
-        response = requests.get(url, headers=headers, params=params)
-        print(f"🔁 Статус ответа: {response.status_code}")
-        print(f"🧾 Ответ: {response.text}")
-        response.raise_for_status()
-        data = response.json()
-        ra_hours = float(data['data']['table']['rows'][0]['cells'][0]['position']['equatorial']['rightAscension']['hours'])
-        angle_degrees = ra_hours * 15
-        zodiac = determine_zodiac_from_angle(angle_degrees)
-        print(f"🔭 Знак Зодиака для {date_str}: {zodiac}")
-        return zodiac
-    except Exception as e:
-        sys.stderr.write(f"❌ Ошибка при получении Зодиака на {date_str}: {str(e)}\n")
-        return "Ошибка определения"
+def fetch_zodiac_sign_placeholder(date_str):
+    return "Знак временно недоступен"
+
 
 def translate_phase(phase):
     return phase  # временно возвращаем английский вариант, чтобы избежать ошибки
 
+
 def generate_magical_tip(phase):
     return "Магический совет временно недоступен"
+
 
 def generate_ritual(phase):
     return "Ритуал временно недоступен"
 
+
 def generate_energy(phase):
     return "Энергия временно недоступна"
+
 
 def generate_focus(phase):
     return ["Цель временно недоступна"]
 
+
 def generate_rune(phase):
     return "Руна временно недоступна"
 
+
 def generate_tarot(phase):
     return "Аркан временно недоступен"
+
 
 def generate_lunar_json(days=5):
     today = datetime.utcnow()
@@ -101,14 +94,13 @@ def generate_lunar_json(days=5):
     for i in range(days):
         date = today + timedelta(days=i)
         date_str = date.strftime("%Y-%m-%d")
-        timestamp = int(date.timestamp())
-        moon_data = fetch_moon_phase(timestamp)
         print(f"\n📅 {date_str}")
+        moon_data = fetch_moon_phase_openmeteo(date_str)
         if moon_data:
             phase = moon_data.get("Phase", "")
-            illum = moon_data.get("Illumination", "")
+            illum = moon_data.get("Illumination", 0.0)
             print(f"🌙 Фаза: {phase}, Освещённость: {illum}")
-            zodiac = fetch_zodiac_sign(date_str)
+            zodiac = fetch_zodiac_sign_placeholder(date_str)
             entry = {
                 "date": date_str,
                 "phase": phase,
@@ -132,6 +124,7 @@ def generate_lunar_json(days=5):
 
     with open("docs/lunar_calendar.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
 
 # Запуск
 generate_lunar_json()
