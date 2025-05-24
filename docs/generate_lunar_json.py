@@ -42,7 +42,7 @@ def fetch_zodiac_sign(date_str):
         api_key = os.getenv('IPGEO_API_KEY')
         if not api_key:
             print("❗ Переменная окружения IPGEO_API_KEY не установлена.")
-        url = f"https://api.ipgeolocation.io/astronomy?apiKey={api_key}&date={date_str}&location=Vilnius"
+        url = f"https://api.ipgeolocation.io/astronomy?apiKey={api_key}&date={date_str}&lat={lat}&long={lon}"
         print(f"🌐 Запрос к API: {url}")
         response = requests.get(url)
         print(f"🔁 Статус ответа: {response.status_code}")
