@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import sys
+import base64
 from datetime import datetime, timedelta
 
 def already_updated_this_month():
@@ -35,21 +36,35 @@ def determine_zodiac_from_angle(angle):
     index = int(angle // 30) % 12
     return zodiac_names[index]
 
+def get_astro_auth_header():
+    app_id = os.getenv("ASTRO_API_ID")
+    app_secret = os.getenv("ASTRO_API_SECRET")
+    if not app_id or not app_secret:
+        raise ValueError("❌ Отсутствует ASTRO_API_ID или ASTRO_API_SECRET")
+    token = f"{app_id}:{app_secret}"
+    encoded_token = base64.b64encode(token.encode()).decode()
+    return {"Authorization": f"Basic {encoded_token}"}
+
 def fetch_zodiac_sign(date_str):
     try:
         lat = 54.6872
         lon = 25.2797
-        api_key = os.getenv('IPGEO_API_KEY')
-        if not api_key:
-            print("❗ Переменная окружения IPGEO_API_KEY не установлена.")
-        url = f"https://api.ipgeolocation.io/astronomy?apiKey={api_key}&date={date_str}&lat={lat}&long={lon}"
-        print(f"🌐 Запрос к API: {url}")
-        response = requests.get(url)
+        url = "https://api.astronomyapi.com/api/v2/bodies/positions/moon"
+        headers = get_astro_auth_header()
+        params = {
+            "latitude": lat,
+            "longitude": lon,
+            "from_date": date_str,
+            "to_date": date_str,
+            "elevation": 0
+        }
+        print(f"🌐 Запрос к AstronomyAPI: {url}")
+        response = requests.get(url, headers=headers, params=params)
         print(f"🔁 Статус ответа: {response.status_code}")
         print(f"🧾 Ответ: {response.text}")
         response.raise_for_status()
         data = response.json()
-        ra_hours = float(data['moon']['right_ascension'])
+        ra_hours = float(data['data']['table']['rows'][0]['cells'][0]['position']['equatorial']['rightAscension']['hours'])
         angle_degrees = ra_hours * 15
         zodiac = determine_zodiac_from_angle(angle_degrees)
         print(f"🔭 Знак Зодиака для {date_str}: {zodiac}")
