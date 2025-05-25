@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   const data = await response.json();
 
-  const today = "2025-05-29";
+  const today = new Date().toISOString().split('T')[0];
 
   const todayData = data.find(entry => entry.date === today);
 
