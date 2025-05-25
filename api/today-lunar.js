@@ -18,13 +18,13 @@ export default async function handler(req, res) {
   }
 
   const output = {
-    current_date: todayData.date,
-    phase_name: todayData.phase,
-    moon_sign: todayData.zodiac,
-    element: todayData.element,
-    tip: todayData.tip,
-    recommended_rituals: todayData.good,
-    avoid_rituals: todayData.bad
+    current_date: todayData.date || "Дата не указана",
+    phase_name: todayData.phase || "Фаза Луны неизвестна",
+    moon_sign: todayData.zodiac_sign || "Знак не определён",
+    element: todayData.element || "Стихия не указана",
+    tip: todayData.magical_tip || "Магический совет временно недоступен",
+    recommended_rituals: todayData.ritual || "Ритуалы не предложены",
+    avoid_rituals: todayData.avoid || "Нет противопоказаний"
   };
 
   res.setHeader('Access-Control-Allow-Origin', '*');
