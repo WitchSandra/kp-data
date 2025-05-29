@@ -1,1 +1,1 @@
-web: python docs/chatgpt-telegram-bot/main.py
+web: python3 docs/chatgpt-telegram-bot/main.py
