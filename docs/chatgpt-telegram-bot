@@ -305,7 +305,7 @@ python-dotenv==1.0.0
 
 
 # Procfile
-worker: python main.py
+web: python main.py
 
 # .gitignore
 .env
