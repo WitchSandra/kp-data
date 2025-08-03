@@ -1,0 +1,33 @@
+name: Update Lunar Calendar
+
+on:
+  schedule:
+    - cron: "0 3 1 */3 *"  # раз в квартал: 1-го числа каждые 3 месяца в 03:00 UTC
+  workflow_dispatch:       # возможность ручного запуска через GitHub UI
+
+jobs:
+  generate-lunar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run fetch_lunar_block.py
+        run: python api/fetch_lunar_block.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add docs/lunar_calendar.json
+          git diff --cached --quiet || git commit -m "Auto-update lunar calendar"
+          git push || echo "🔁 Нет изменений для push"
