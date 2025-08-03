@@ -8,7 +8,7 @@ longitude = 21.1
 
 # Даты диапазона (5 лет)
 start_date = "2025-01-01"
-end_date = "2029-12-31"
+end_date = "2025-12-31"
 
 # Ссылка API OpenMeteo
 url = (
